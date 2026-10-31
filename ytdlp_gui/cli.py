@@ -46,9 +46,25 @@ def selftest():
             fh.write(text)
     except OSError:
         pass
-    sys.stdout.write(text)
-    sys.stdout.flush()
+    _write_stdout(text)
     return 0 if ok else 1
+
+
+def _write_stdout(text):
+    """Write to stdout when one exists.
+
+    Windowed builds (PyInstaller ``--noconsole``) have ``sys.stdout is None``,
+    so ``--selftest`` must not depend on a console being attached; the report
+    also lands in ``selftest_result.txt`` next to the app.
+    """
+    stream = sys.stdout
+    if stream is None:
+        return
+    try:
+        stream.write(text)
+        stream.flush()
+    except (OSError, ValueError, AttributeError):
+        pass
 
 
 def main():

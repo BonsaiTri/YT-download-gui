@@ -157,7 +157,7 @@ yt-dlp-gui/
 │   └── cli.py               # main() and the --selftest smoke test
 ├── launchers/               # Windows / macOS / Linux app launchers
 ├── tests/                   # unit tests (no GUI or network needed)
-├── build/                   # icon generator + PyInstaller platform scripts
+├── build/                   # icon generator, output-folder menu, PyInstaller scripts
 └── .github/workflows/       # CI: lint + tests on Linux/macOS/Windows
 ```
 
@@ -190,17 +190,44 @@ plus a headless GUI-construction smoke test.
 
 ## Building a standalone app
 
-| OS | Builder | Output |
+| OS | Builder | Output (in the folder you pick) |
 |---|---|---|
-| Windows — **single file** | `build\windows-build-onefile.bat` | **`dist\yt-dlp-gui.exe`** — one portable exe (~31 MB) with Python + engine inside; no companion folder |
-| Windows — folder build | `build\windows-build.bat` | `dist\yt-dlp-gui-win64.zip` — exe + bundled Python 3.13 + engine, own icon, `update-engine.bat` |
-| macOS (run on a Mac) | `build/macos-build.sh` | `dist/yt-dlp-gui-macos.zip` — `yt-dlp-gui.app` (unsigned: right-click → Open the first time) |
-| Linux (run on the target distro) | `build/linux-build.sh` | `dist/yt-dlp-gui-linux.tar.gz` — binary + bundled engine + `run.sh` |
+| Windows — **single file** | `build\windows-build-onefile.bat` | **`yt-dlp-gui.exe`** — one portable exe (~31 MB) with Python + engine inside; no companion folder |
+| Windows — folder build | `build\windows-build.bat` | `yt-dlp-gui-win64.zip` — exe + bundled Python 3.13 + engine, own icon, `update-engine.bat` |
+| macOS (run on a Mac) | `build/macos-build.sh` | `yt-dlp-gui-macos.zip` — `yt-dlp-gui.app` (unsigned: right-click → Open the first time) |
+| Linux (run on the target distro) | `build/linux-build.sh` | `yt-dlp-gui-linux.tar.gz` — binary + bundled engine + `run.sh` |
 
-Each builder installs PyInstaller, clones/updates `../yt-dlp`, builds from
-`build/yt-dlp-gui.spec`, then runs a headless `--selftest` and **fails the build if
-the engine cannot run**. The icon is generated from source with
+Each builder first asks **where the finished build should go**
+(`build/choose_output.py`):
+
+```
+  [1] C:\path\to\repo\dist   (default)
+  [2] Browse for a folder...
+  [3] Type a path...
+  [4] Cancel the build
+```
+
+Bare Enter takes the default (`dist`, next to the sources). You can paste a path
+directly at the prompt; the folder is created if needed and write-tested. The
+builder then installs PyInstaller, clones/updates `../yt-dlp`, builds from
+`build/yt-dlp-gui.spec`, runs a headless `--selftest` (**fails the build if the
+engine cannot run**), drops the artifact in the folder you chose and opens that
+folder when it is done. The icon is generated from source with
 `python build/make_icon.py` (stdlib only, no PIL).
+
+Unattended / CI runs skip the menu when the output folder is pre-set:
+
+```bat
+set YTDLP_GUI_BUILD_OUT=D:\releases\yt-dlp-gui
+build\windows-build.bat
+```
+
+```sh
+YTDLP_GUI_BUILD_OUT=~/releases ./build/linux-build.sh
+```
+
+With no terminal attached (piped stdin, CI job) the default `dist` folder is used
+without prompting.
 
 ## Configuration
 

@@ -1,0 +1,34 @@
+# --- Python ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- launcher artefacts ---------------------------------------------------
+*.lnk
+
+# --- app runtime ----------------------------------------------------------
+# Personal settings and downloaded media must never be committed.
+config.json
+downloads/
+selftest_result.txt
+
+# --- build output ---------------------------------------------------------
+dist/
+build/onefile-stage/
+build/pyi-onefile/
+build/pyi/
+build/*.spec.bak
+*.zip
+*.exe
+
+# --- editors / OS ---------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

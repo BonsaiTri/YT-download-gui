@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=yt-dlp GUI
+GenericName=Video Downloader
+Comment=Modern dark-mode GUI for yt-dlp
+Exec=__EXEC__
+Icon=__ICON__
+Terminal=false
+Categories=AudioVideo;Video;Network;Utility;
+Keywords=yt-dlp;youtube;download;video;audio;playlist;
+StartupNotify=true
+StartupWMClass=yt-dlp-gui
